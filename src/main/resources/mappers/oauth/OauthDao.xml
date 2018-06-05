@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tiansu.hlms.oauth.wx.dao.OauthDao">
+
+    <!-- 新增鉴权参数 -->
+    <insert id="createOauthParams">
+        INSERT INTO hlms_oauth_paramers (
+            id, corp_id, suite_id, pre_auth_code, pre_auth_code_expire_time,
+            permanent_code, access_token, access_token_expire_time, create_time)
+        VALUES
+            (#{id}, #{corpId}, #{suiteId}, #{preAuthCode}, #{preAuthCodeExpireTime},
+            #{permanentCode}, #{accessToken}, #{accessTokenExpireTime}, NOW())
+    </insert>
+
+    <!--更新鉴权参数表-->
+    <update id="updateOauthParams">
+        UPDATE hlms_oauth_paramers SET
+        ID = #{id}
+        <if test="preAuthCode!=null and preAuthCode != ''">
+            ,pre_auth_code = #{preAuthCode}
+        </if>
+        <if test="preAuthCodeExpireTime!=null">
+            ,pre_auth_code_expire_time = #{preAuthCodeExpireTime}
+        </if>
+        <if test="permanentCode!=null and permanentCode != ''">
+            ,permanent_code = #{permanentCode}
+        </if>
+        <if test="accessToken!=null and accessToken != ''">
+            ,access_token = #{accessToken}
+        </if>
+        <if test="accessTokenExpireTime!=null">
+            ,access_token_expire_time = #{accessTokenExpireTime}
+        </if>
+        <if test="isAuthorized!=null and isAuthorized!=''">
+            ,is_authorized = #{isAuthorized}
+        </if>
+        WHERE ID = #{id}
+    </update>
+
+    <!-- 根据租户鉴权id 和 应用id 查询鉴权参数 -->
+    <select id="getOauthParam" parameterType="java.util.Map" resultType="com.tiansu.hlms.oauth.wx.bean.OauthParams">
+        SELECT
+            id, corp_id AS corpId ,suite_id AS suiteId
+        FROM hlms_oauth_paramers
+        WHERE corp_id = #{corpId} AND suite_id = #{suiteId}
+    </select>
+
+    <!-- 根据预授权码 查询鉴权参数 -->
+    <select id="getOauthParamByPreAuthCode" parameterType="java.lang.String" resultType="com.tiansu.hlms.oauth.wx.bean.OauthParams">
+        SELECT
+            id, corp_id AS corpId ,suite_id AS suiteId , pre_auth_code_expire_time AS preAuthCodeExpireTime,
+            permanent_code AS permanentCode, access_token AS accessToken, access_token_expire_time AS accessTokenExpireTime
+        FROM hlms_oauth_paramers
+        WHERE pre_auth_code = #{preAuthCode}
+    </select>
+
+    <!--根据永久授权码 查询鉴权参数-->
+    <select id="getOauthParamByPermanentCode" parameterType="java.lang.String" resultType="com.tiansu.hlms.oauth.wx.bean.OauthParams">
+        SELECT
+            id, corp_id AS corpId ,suite_id AS suiteId , access_token AS accessToken, access_token_expire_time AS accessTokenExpireTime
+        FROM hlms_oauth_paramers
+        WHERE permanent_code = #{permanent_code}
+    </select>
+
+    <!--
+    <select id="getCorpIdAll" resultType="java.lang.String">
+        SELECT
+            DISTINCT corp_id AS corpId
+        FROM hlms_oauth_paramers
+
+    </select>
+    -->
+
+    <!--封装返回要推送的数据版本号信息-->
+    <select id="getSuiteIdByCorpId" parameterType="java.lang.String"
+            resultType="com.tiansu.hlms.oauth.wx.bean.Version">
+        SELECT
+        DISTINCT a.suite_id AS suiteId ,b.suite_token AS token
+        FROM hlms_oauth_paramers a
+        LEFT JOIN hlms_oauth_suite b ON a.suite_id = b.suite_id
+        WHERE corp_id = #{tenantId} AND is_authorized = '1'
+    </select>
+
+    <!--获取鉴权参数表中所有应用-->
+    <select id="getSuiteIdAll" resultType="java.lang.String">
+        SELECT
+        DISTINCT suite_id AS suiteId
+        FROM hlms_oauth_paramers
+
+    </select>
+
+    <!--校验token是否合法-->
+    <select id="checkToken" parameterType="String" resultType="java.util.Map">
+        SELECT
+          id,corp_id,suite_id
+        FROM hlms_oauth_paramers
+        WHERE access_token=#{accessToken}
+    </select>
+
+    <select id="getAuthorized" resultType="com.tiansu.hlms.oauth.wx.bean.Authorized">
+        SELECT
+            a.corp_id AS corpId, a.suite_id AS suiteId, b.suite_token AS suiteToken ,
+            b.suite_ticket AS suiteTicket , a.pre_auth_code AS preAuthCode
+        FROM hlms_oauth_paramers a
+        LEFT JOIN hlms_oauth_suite b ON a.suite_id = b.suite_id
+        WHERE a.is_authorized = 0
+    </select>
+
+</mapper>

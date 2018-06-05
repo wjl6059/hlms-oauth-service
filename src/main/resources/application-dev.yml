@@ -1,0 +1,50 @@
+tenant:
+  department: /hlms/api/department/list
+  departments: /hlms/api/tenant/department/list
+  permission: /hlms/api/tenant/data/register
+  user: /hlms/api/user/simplelist
+  users: /hlms/api/tenant/user/simplelist
+  location: /hlms/api/tenant/hlmsloc/loc_info_list
+  userIdByToken: /hlms/api/tenant/login/user/{token}
+  collectors: /hlms/api/sync/collectors
+
+suite:
+  providerApi: /hlms/out/service/suiteConfig?suite_id={suite_id}&business={business}
+  suiteById: /hlms/out/getSuiteById
+  suiteInfoById: /hlms/suite/getsuitebyid?suite_id={suiteId}
+  suiteConfigByTenantId: /hlms/out/suiteconfigbytenantid?suite_id={suite_id}&tenant_id={tenant_id}&business={business}
+  synchroSuiteParams: /cgi-bin/provider_synAppYunMessage/v1.01
+  checkLogin4AppApi: /onesite/api/v1.00/mobile/login4App
+system:
+  tenantById: /hlms/api/gettenantbyid?tenantId={tenantId}
+
+restTemplate:
+  maxTotalConnect: 50
+  maxConnectPerRoute: 200
+  connectTimeout: 6000
+  readTimeout: 10000
+
+############################################依赖关系################################################
+#
+#  tenant: 租户模块
+#    department: 获取部门
+#    departments: 获取部门v1.02
+#    permission: 获取权限
+#    user: 用于数据同步获取用户
+#    users: 用于数据同步获取用户v1.02
+#    userIdByToken: 根据登录token获取用户信息
+#    collectors: 插入同步记录，用于同步结果回调
+#
+#  suite: suite应用注册模块
+#    providerApi: 根据应用id获取第三方uri
+#    suiteById:   根据应用id和租户id获取应用详情
+#    suiteInfoById: 根据应用id获取应用详情
+#    suiteConfigByTenantId: 根据应用id、租户id和相关key获取第三方资源uri
+#    synchroSuiteParams: 查询云端suite表数据 用于本地化同步
+#
+#  system: 系统服务模块
+#    tenantById: 根据租户id获取租户信息
+#
+#
+####################################################################################################
+

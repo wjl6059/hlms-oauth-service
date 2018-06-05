@@ -1,0 +1,41 @@
+spring:
+  aop:
+    auto: true
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource    #连接池
+    filters: stat,wall,log4j
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select ‘x‘
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+    connection-properties: druid.stat.merggSql=ture;druid.stat.slowSqlMillis=5000
+#  application:
+#    name: hlms-oauth-service
+#  cloud:
+#    consul:
+#      host: 192.168.40.64
+#      port: 8500
+#      discovery:
+#        health-check-path: /oauth
+#        health-check-interval: 15s
+mybatis:
+  #把xml文件放在com.XX.mapper.*中可能会出现找到的问题，这里把他放在resource下的mapper中实体扫描，多个package用逗号或者分号分隔
+  mapperLocations: classpath*:mappers/**/*.xml
+  #这里是实体类的位置
+  typeAliasesPackage: com.tiansu.hlms.oauth.wx.bean
+## 响应页面默认后缀
+mvc:
+  view:
+    prefix: classpath:/templates/
+    suffix: .html

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tiansu.hlms.oauth.wx.dao.ServiceProviderDao">
+
+    <!--获取所有鉴权应用信息-->
+    <select id="getOauthSuiteInfo" resultType="com.tiansu.hlms.oauth.wx.bean.SuiteTicket">
+        SELECT
+          suite_id AS suiteId, suite_token AS token
+        FROM hlms_oauth_suite
+    </select>
+
+    <!--根据suite_id和suite_secret查询表hlms_oauth_suite中是否存在-->
+    <select id="getOauthSuite" parameterType="Map" resultType="com.tiansu.hlms.oauth.wx.bean.OauthSuite">
+        SELECT
+          suite_id AS suiteId,suite_secret AS suiteSecret,suite_access_token AS suiteAccessToken, suite_ticket AS suiteTicket
+        FROM hlms_oauth_suite
+        WHERE suite_secret = #{suiteSecret} AND suite_id = #{suiteId}
+    </select>
+
+    <!--校验应用秘钥是否合法-->
+    <select id="checkSuiteSecret" parameterType="String" resultType="java.util.Map">
+        SELECT id FROM hlms_oauth_suite WHERE suite_secret=#{suiteSecret}
+    </select>
+
+    <!--根据suiteId查询应用鉴权参数-->
+    <select id="getOauthSuiteBySuiteId" resultType="com.tiansu.hlms.oauth.wx.bean.OauthSuite"
+            parameterType="java.lang.String">
+        SELECT
+          id, suite_id AS suiteId, suite_secret AS suiteSecret, suite_token AS suiteToken,
+          suite_ticket AS suiteTicket , suite_access_token AS suiteAccessToken
+        FROM hlms_oauth_suite
+        WHERE suite_id = #{suiteId}
+    </select>
+
+    <!--根据应用id获取服务商提供的token-->
+    <select id="getSuiteTokenBySuiteId" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT
+          suite_token AS suiteToken
+        FROM hlms_oauth_suite
+        WHERE suite_id = #{suiteId}
+    </select>
+
+    <!--根据suite_access_token获取suiteId-->
+    <select id="getSuiteIdBySuiteAccessToken" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT
+          suite_id AS suiteId
+        FROM hlms_oauth_suite
+        WHERE suite_access_token = #{suiteAccessToken}
+    </select>
+
+    <!--根据access_token获取TenantId-->
+    <select id="getTenantIdByAccessToken" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT
+        corp_id AS tenantId, permanent_code AS permanentCode
+        FROM hlms_oauth_paramers
+        WHERE access_token = #{accessToken}
+    </select>
+
+    <!--新增鉴权应用信息-->
+    <insert id="createSuite">
+        INSERT INTO hlms_oauth_suite
+          (id, suite_id, suite_secret, suite_ticket, suite_access_token, suite_token, create_time)
+        VALUES(#{id}, #{suiteId}, #{suiteSecret}, #{suiteTicket}, #{suiteAccessToken}, #{suiteToken}, NOW())
+    </insert>
+
+    <!--根据suiteId更新鉴权应用表-->
+    <update id="updateSuite">
+        UPDATE hlms_oauth_suite
+        SET suite_id = #{suiteId}
+        <if test="suiteTicket!=null and suiteTicket!=''">
+            ,suite_ticket = #{suiteTicket}
+        </if>
+        <if test="suiteToken!=null and suiteToken!=''">
+            ,suite_token = #{suiteToken}
+        </if>
+        <if test="suiteAccessToken!=null and suiteAccessToken!=''">
+            ,suite_access_token = #{suiteAccessToken}
+        </if>
+        WHERE suite_id = #{suiteId}
+    </update>
+
+</mapper>

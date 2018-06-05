@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tiansu.hlms.oauth.wx.dao.RegisterDao">
+    <insert id="insertProvider" parameterType="java.util.Map">
+        INSERT INTO hlms_oauth_wx_provider (
+            id,
+            provider_id,
+            provider_secret,
+            create_time
+        )
+        VALUES(#{id},#{providerId},#{provider_secret},NOW())
+    </insert>
+
+    <select id="getProvider" parameterType="String" resultType="java.util.Map">
+        SELECT provider_id, provider_secret FROM hlms_oauth_wx_provider WHERE provider_id =#{providerId}
+    </select>
+
+    <insert id="insertSuite" parameterType="java.util.Map">
+        INSERT INTO hlms_oauth_suite (
+        id,
+        suite_id,
+        suite_secret,
+        suite_token,
+        create_time
+        )
+        VALUES(#{id},#{suiteId},#{suite_secret},#{suite_token},NOW())
+    </insert>
+
+    <select id="getSuite" parameterType="String" resultType="java.util.Map">
+        SELECT suite_id, suite_secret FROM hlms_oauth_suite WHERE suite_id =#{suiteId}
+    </select>
+
+    <select id="getSuiteByToken" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT suite_id,corp_id FROM hlms_oauth_paramers WHERE access_token = #{access_token} AND access_token_expire_time >NOW()
+    </select>
+
+    <select id="getFiled" parameterType="java.util.Map" resultType="String">
+        SELECT field_name FROM hlms_suite_oauth_field WHERE suite_id=#{suite_id} AND field_owner=#{field_owner}
+    </select>
+</mapper>
