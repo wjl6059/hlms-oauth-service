@@ -20,6 +20,16 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+		<java.version>1.8</java.version>
+		<spring-boot.version>1.5.10.RELEASE</spring-boot.version>
+		<springfox-swagger2.version>2.7.0</springfox-swagger2.version>
+		<maven-wrapper.version>0.0.5</maven-wrapper.version>
+		<maven.version>3.5.2</maven.version>
+		<mybatis.version>1.3.1</mybatis.version>
+
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<surefire.maven.version>2.20.1</surefire.maven.version>
@@ -34,6 +44,32 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-dependencies</artifactId>
+			<version>${spring-boot.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${springfox-swagger2.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${springfox-swagger2.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -130,20 +166,6 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${checkstyle.maven.version}</version>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>${jxr.maven.version}</version>
-				<reportSets>
-					<reportSet>
-						<id>aggregate</id>
-						<reports>
-							<report>aggregate</report>
-							<report>test-aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
 		</plugins>
 	</reporting>
 
@@ -197,10 +219,6 @@
 					<siteDirectory>${basedir}/src/main/site</siteDirectory>
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
-					<systemPropertyVariables>
-						<!--生成结果存放路径-->
-						<jacoco-agent.destfile>**/target/jacoco.exec</jacoco-agent.destfile>
-					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -245,6 +263,15 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>com.rimerosolutions.maven.plugins</groupId>
+				<artifactId>wrapper-maven-plugin</artifactId>
+				<version>${maven-wrapper.version}</version>
+				<inherited>false</inherited> <!-- mvn wrapper:wrapper -N -->
+				<configuration>
+					<mavenVersion>${maven.version}</mavenVersion>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
